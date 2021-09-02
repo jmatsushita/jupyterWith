@@ -22,28 +22,9 @@
       in
       rec {
 
-        packages = let
-          iHaskell = pkgs.jupyterWith.kernels.iHaskellWith {
-            extraIHaskellFlags = "--codemirror Haskell"; # for jupyterlab syntax highlighting
-            name = "ihaskell-flake";
-          };
-          iPython = pkgs.jupyterWith.kernels.iPythonWith {
-            name = "Python-data-env";
-            ignoreCollisions = true;
-          };
-        in {
-          pythonExample = pkgs.jupyterWith.jupyterlabWith {
-            kernels = [ iPython ];
-          };
-          haskellExample = pkgs.jupyterWith.jupyterlabWith {
-            kernels = [ iHaskell ];
-          };
-          hybridExample = pkgs.jupyterWith.jupyterlabWith {
-            kernels = [ iHaskell iPython ];
-          };
+        defaultPackage = pkgs.jupyterWith.jupyterlabWith {
+          kernels = [];
         };
-
-        defaultPackage = self.packages."${system}".pythonExample;
 
         lib = {
           inherit (pkgs.jupyterWith)
