@@ -22,9 +22,22 @@
       in
       rec {
 
-        defaultPackage = pkgs.jupyterWith.jupyterlabWith {
-          kernels = [];
+        packages = let
+          iHaskell = pkgs.jupyterWith.kernels.iHaskellWith {
+            name = "ihaskell-flake";
+            packages = p: with p; [ vector aeson ];
+            extraIHaskellFlags = "--codemirror Haskell"; # for jupyterlab syntax highlighting
+            haskellPackages = pkgs.haskellPackages;
+          };
+        in
+        {
+          ihaskell = pkgs.jupyterWith.jupyterlabWith {
+            kernels = [ iHaskell ];
+            # directory = "./.jupyterlab";
+          };
         };
+
+        defaultPackage = self.packages."${system}".ihaskell;
 
         lib = {
           inherit (pkgs.jupyterWith)
