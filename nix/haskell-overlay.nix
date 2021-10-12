@@ -1,6 +1,7 @@
 final: prev:
 
 let
+  # TODO remove
   ihaskellSrc = prev.fetchFromGitHub {
     owner = "gibiansky";
     repo = "IHaskell";

@@ -10,6 +10,21 @@ with (import ./lib/directory.nix { inherit pkgs; });
 with (import ./lib/docker.nix { inherit pkgs; });
 
 let
+
+  # import default package from flake
+  # just would like to retreive the overlay
+  flakeAttrs = (import (
+      let
+        lock = builtins.fromJSON (builtins.readFile ./flake.lock);
+      in fetchTarball {
+        url = "https://github.com/teto/flake-compat/archive/${lock.nodes.flake-compat.locked.rev}.tar.gz";
+        sha256 = lock.nodes.flake-compat.locked.narHash; }
+    ) {
+      src =  ./.;
+    }).defaultNix;
+
+
+
   # Kernel generators.
   kernels = pkgs.callPackage ./kernels {};
   kernelsString = pkgs.lib.concatMapStringsSep ":" (k: "${k.spec}");

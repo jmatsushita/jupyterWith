@@ -2,14 +2,18 @@
   description = "declarative and reproducible Jupyter environments - powered by Nix";
 
   inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs.url = "nixpkgs/a5d03577f0161c8a6e713b928ca44d9b3feb2c37";
+    flake-utils.url = github:numtide/flake-utils;
+    flake-compat.url = github:/teto/flake-compat/support-packages;
+    nixpkgs.url = github:nixos/nixpkgs/a5d03577f0161c8a6e713b928ca44d9b3feb2c37;
+    ihaskell.url = github:teto/IHaskell/forJupyter;
   };
 
   outputs =
     inputs@{ self
     , nixpkgs
+    , ihaskell
     , flake-utils
+    , ...
     }:
     (flake-utils.lib.eachSystem ["x86_64-linux"]
       (system:
@@ -23,7 +27,7 @@
       rec {
 
         packages = let
-          iHaskell = pkgs.jupyterWith.kernels.iHaskellWith {
+          iHaskellEnv = pkgs.jupyterWith.kernels.iHaskellWith {
             name = "ihaskell-flake";
             packages = p: with p; [ vector aeson ];
             extraIHaskellFlags = "--codemirror Haskell"; # for jupyterlab syntax highlighting
@@ -32,7 +36,7 @@
         in
         {
           ihaskell = pkgs.jupyterWith.jupyterlabWith {
-            kernels = [ iHaskell ];
+            kernels = [ iHaskellEnv ];
             # directory = "./.jupyterlab";
           };
         };
@@ -54,8 +58,11 @@
     ) //
     {
       overlays = {
-        jupyterWith = final: prev: { jupyterWith = prev.callPackage ./. { pkgs = final; }; };
-        haskell = import ./nix/haskell-overlay.nix;
+        jupyterWith = final: prev: {
+          jupyterWith = prev.callPackage ./. { pkgs = final; };
+        };
+        # haskell = import ./nix/haskell-overlay.nix;
+        haskell = ihaskell.overlay;
         python = import ./nix/python-overlay.nix;
       };
     };
