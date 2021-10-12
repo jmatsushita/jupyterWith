@@ -3,8 +3,11 @@
 
   inputs = {
     flake-utils.url = github:numtide/flake-utils;
-    flake-compat.url = github:/teto/flake-compat/support-packages;
-    nixpkgs.url = github:nixos/nixpkgs/a5d03577f0161c8a6e713b928ca44d9b3feb2c37;
+    flake-compat = {
+      url = github:/teto/flake-compat/support-packages;
+      flake = false;
+    };
+    nixpkgs.url = "github:nixos/nixpkgs/a5d03577f0161c8a6e713b928ca44d9b3feb2c37";
     ihaskell.url = github:teto/IHaskell/forJupyter;
   };
 
@@ -22,6 +25,7 @@
           {
             inherit system;
             overlays = nixpkgs.lib.attrValues self.overlays;
+              # [ self.overlays.jupyterWith ];
           };
       in
       rec {
