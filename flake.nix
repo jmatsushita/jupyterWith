@@ -8,7 +8,7 @@
       flake = false;
     };
     nixpkgs.url = "github:nixos/nixpkgs/a5d03577f0161c8a6e713b928ca44d9b3feb2c37";
-    ihaskell.url = github:gibiansky/IHaskell;
+    ihaskell.url = github:jmatsushita/IHaskell/flake-darwin;
   };
 
   outputs =
